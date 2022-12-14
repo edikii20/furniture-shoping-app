@@ -120,7 +120,8 @@ class ProductDetailPageModel extends ChangeNotifier {
       await userCart.save();
     }
 
-    Navigator.of(context).pop();
+    onPressedBack(context: context);
+//    Navigator.of(context).pop();
   }
 
   void onImageChanged(int value) {
