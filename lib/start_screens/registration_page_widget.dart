@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_shoping_app/utilities/my_icons_widget.dart';
-import 'package:furniture_shoping_app/start_screens/header_logo_widget.dart';
+import 'package:furniture_shoping_app/utilities/start_screens_header_logo_widget.dart';
 
-class SignUpPageWidget extends StatefulWidget {
-  const SignUpPageWidget({super.key});
+class RegistrationPageWidget extends StatefulWidget {
+  const RegistrationPageWidget({super.key});
 
   @override
-  State<SignUpPageWidget> createState() => _SignUpPageWidgetState();
+  State<RegistrationPageWidget> createState() => _RegistrationPageWidgetState();
 }
 
-class _SignUpPageWidgetState extends State<SignUpPageWidget> {
+class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,23 +28,11 @@ class _SignUpPageWidgetState extends State<SignUpPageWidget> {
               SizedBox(
                 height: 30,
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 36),
-                child: Text(
-                  'WELCOME',
-                  style: TextStyle(
-                    color: Color(0xFF303030),
-                    fontSize: 25,
-                    fontFamily: 'Merriweather',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.05,
-                  ),
-                ),
-              ),
+              _WelcomeTextWidget(),
               SizedBox(
                 height: 30,
               ),
-              SignupFormWidget(),
+              _RegistrationFormWidget(),
             ],
           ),
         ],
@@ -53,16 +41,40 @@ class _SignUpPageWidgetState extends State<SignUpPageWidget> {
   }
 }
 
-class SignupFormWidget extends StatefulWidget {
-  const SignupFormWidget({
+class _WelcomeTextWidget extends StatelessWidget {
+  const _WelcomeTextWidget({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<SignupFormWidget> createState() => _SignupFormWidgetState();
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 36),
+      child: Text(
+        'WELCOME',
+        style: TextStyle(
+          color: Color(0xFF303030),
+          fontSize: 25,
+          fontFamily: 'Merriweather',
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.05,
+        ),
+      ),
+    );
+  }
 }
 
-class _SignupFormWidgetState extends State<SignupFormWidget> {
+class _RegistrationFormWidget extends StatefulWidget {
+  const _RegistrationFormWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_RegistrationFormWidget> createState() =>
+      _RegistrationFormWidgetState();
+}
+
+class _RegistrationFormWidgetState extends State<_RegistrationFormWidget> {
   bool isObscure = false;
 
   void eyeOnPressed() => setState(() {
