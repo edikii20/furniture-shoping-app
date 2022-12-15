@@ -8,7 +8,6 @@ class BoardingPageWidget extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        Container(color: Colors.white),
         Positioned(
           height: 731.4,
           width: 411.4,

@@ -1,61 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_shoping_app/utilities/my_icons_widget.dart';
-import 'package:furniture_shoping_app/start_screens/header_logo_widget.dart';
+import 'package:furniture_shoping_app/utilities/start_screens_header_logo_widget.dart';
 
-class LogInPageWidget extends StatefulWidget {
-  const LogInPageWidget({super.key});
+class AutorizationPageWidget extends StatelessWidget {
+  const AutorizationPageWidget({super.key});
 
-  @override
-  State<LogInPageWidget> createState() => _LogInPageWidgetState();
-}
-
-class _LogInPageWidgetState extends State<LogInPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(
-                height: 20,
-              ),
-              HeaderLogoWidget(),
-              SizedBox(
-                height: 50,
-              ),
-              _HeaderWelcomeTextWidget(),
-              SizedBox(
-                height: 24,
-              ),
-              LoginFormWidget(),
-            ],
-          ),
-        ],
+      body: SafeArea(
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                SizedBox(
+                  height: 20,
+                ),
+                HeaderLogoWidget(),
+                SizedBox(
+                  height: 50,
+                ),
+                _HeaderWelcomeTextWidget(),
+                SizedBox(
+                  height: 24,
+                ),
+                _AutorizationFormWidget(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class LoginFormWidget extends StatefulWidget {
-  const LoginFormWidget({
+class _AutorizationFormWidget extends StatelessWidget {
+  const _AutorizationFormWidget({
     Key? key,
   }) : super(key: key);
+  final bool isObscure = true;
 
-  @override
-  State<LoginFormWidget> createState() => _LoginFormWidgetState();
-}
-
-class _LoginFormWidgetState extends State<LoginFormWidget> {
-  bool isObscure = false;
-
-  void eyeOnPressed() => setState(() {
-        isObscure = !isObscure;
-      });
+  void eyeOnPressed() {}
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +100,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
               suffixIcon: IconButton(
                 icon: isObscure
-                    ? const Icon(MyIcons.eyeoff)
-                    : const Icon(MyIcons.eye),
+                    ? const Icon(MyIcons.eye)
+                    : const Icon(MyIcons.eyeoff),
                 onPressed: () => eyeOnPressed(),
                 color: const Color(0xFF242424),
                 iconSize: 20,
