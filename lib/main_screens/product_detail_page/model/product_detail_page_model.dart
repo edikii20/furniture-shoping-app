@@ -121,7 +121,6 @@ class ProductDetailPageModel extends ChangeNotifier {
     }
 
     onPressedBack(context: context);
-//    Navigator.of(context).pop();
   }
 
   void onImageChanged(int value) {
