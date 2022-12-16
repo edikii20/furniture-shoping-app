@@ -65,10 +65,12 @@ class AuthorisationRepository {
       //TODO: Переделать с user id
       final user =
           _usersBox.values.where((element) => element.email == email).first;
+
       if (user.password != password) {
         throw LogInWithEmailAndPasswordFailure.fromCode(
             ExceptionCodes.wrongPassword);
       }
+      //TODO: Hive Не может хранить два одинаковых HiveObject в разных боксах
       await _sessionBox.add(user);
       _closeBoxes();
     }

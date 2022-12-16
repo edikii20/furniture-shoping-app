@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_shoping_app/utilities/my_icons_widget.dart';
 import 'package:furniture_shoping_app/utilities/start_screens_header_logo_widget.dart';
 
-import '../bloc/autorization_bloc.dart';
+import '../bloc/authorization_bloc.dart';
 
 class AutorizationPageWidget extends StatelessWidget {
   const AutorizationPageWidget({super.key});
@@ -12,28 +12,47 @@ class AutorizationPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                SizedBox(
-                  height: 20,
+      body: BlocListener<AuthorizationBloc, AuthorizationState>(
+        listenWhen: (previous, current) => current.error != null,
+        listener: (context, state) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.error ?? '',
+                style: const TextStyle(
+                  color: Color(0xFF242424),
+                  fontSize: 14,
+                  fontFamily: 'NunitoSans',
                 ),
-                HeaderLogoWidget(),
-                SizedBox(
-                  height: 50,
-                ),
-                _HeaderWelcomeTextWidget(),
-                SizedBox(
-                  height: 24,
-                ),
-                _AutorizationFormWidget(),
-              ],
+              ),
+              backgroundColor: Colors.red,
+              duration: const Duration(milliseconds: 500),
             ),
-          ],
+          );
+        },
+        child: SafeArea(
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  HeaderLogoWidget(),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  _HeaderWelcomeTextWidget(),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  _AutorizationFormWidget(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -111,8 +130,8 @@ class _AutorizationFormWidgetState extends State<_AutorizationFormWidget> {
             height: 25,
           ),
           _AuthorizationLogInButtonWidget(
-              email: emailInputController.text,
-              password: passwordInputController.text),
+              emailInputController: emailInputController,
+              passwordInputController: passwordInputController),
           const SizedBox(
             height: 15,
           ),
@@ -158,18 +177,22 @@ class _AuthorizationPasswordInputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AutorizationBloc, AutorizationState>(
+    return BlocBuilder<AuthorizationBloc, AuthorizationState>(
+      buildWhen: (previous, current) =>
+          previous.isPasswordObscure != current.isPasswordObscure,
       builder: (context, state) {
         return TextField(
           controller: passwordInputController,
-          obscureText: state,
+          obscureText: state.isPasswordObscure,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
             suffixIcon: IconButton(
-              icon: isObscure
+              icon: state.isPasswordObscure
                   ? const Icon(MyIcons.eye)
                   : const Icon(MyIcons.eyeoff),
-              onPressed: () => eyeOnPressed(),
+              onPressed: () => context
+                  .read<AuthorizationBloc>()
+                  .add(AuthorizationOnPressEyeEvent()),
               color: const Color(0xFF242424),
               iconSize: 20,
               padding: const EdgeInsets.only(right: 5),
@@ -192,41 +215,63 @@ class _AuthorizationPasswordInputWidget extends StatelessWidget {
 class _AuthorizationLogInButtonWidget extends StatelessWidget {
   const _AuthorizationLogInButtonWidget({
     Key? key,
-    required this.email,
-    required this.password,
+    required this.emailInputController,
+    required this.passwordInputController,
   }) : super(key: key);
 
-  final String email;
-  final String password;
+  final TextEditingController emailInputController;
+  final TextEditingController passwordInputController;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 9.2),
-      child: ElevatedButton(
-        onPressed: () =>
-            Navigator.of(context).pushReplacementNamed('/main_page'),
-        style: ButtonStyle(
-          elevation: MaterialStateProperty.all(10),
-          splashFactory: NoSplash.splashFactory,
-          backgroundColor: MaterialStateProperty.all(
-            const Color(0xFF242424),
-          ),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+    return BlocListener<AuthorizationBloc, AuthorizationState>(
+      listenWhen: (previous, current) =>
+          current.status == AuthorizationStatus.authenticated,
+      listener: (context, _) {
+        Navigator.of(context).pushReplacementNamed('/page_picker');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(left: 9.2),
+        child: ElevatedButton(
+          onPressed: () => context.read<AuthorizationBloc>().add(
+              AuthorizationLogInEvent(
+                  email: emailInputController.text,
+                  password: passwordInputController.text)),
+          style: ButtonStyle(
+            elevation: MaterialStateProperty.all(10),
+            splashFactory: NoSplash.splashFactory,
+            backgroundColor: MaterialStateProperty.all(
+              const Color(0xFF242424),
             ),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            fixedSize: MaterialStateProperty.all(const Size(285, 50)),
           ),
-          fixedSize: MaterialStateProperty.all(const Size(285, 50)),
-        ),
-        child: const Text(
-          'Log in',
-          style: TextStyle(
-            color: Color(0xFFFFFFFF),
-            fontSize: 18,
-            fontFamily: 'NunitoSans',
-            fontWeight: FontWeight.w600,
-            decoration: TextDecoration.none,
+          child: BlocBuilder<AuthorizationBloc, AuthorizationState>(
+            buildWhen: (previous, current) => previous.status != current.status,
+            builder: (context, state) {
+              if (state.status == AuthorizationStatus.inprogress) {
+                return const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return const Text(
+                  'Log in',
+                  style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontSize: 18,
+                    fontFamily: 'NunitoSans',
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.none,
+                  ),
+                );
+              }
+            },
           ),
         ),
       ),

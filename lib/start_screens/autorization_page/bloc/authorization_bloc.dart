@@ -3,25 +3,29 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/repositories/authorization_repository.dart';
 
-part 'autorization_event.dart';
-part 'autorization_state.dart';
+part 'authorization_event.dart';
+part 'authorization_state.dart';
 
 //TODO: Подумать над переработкай стейта и разделить его на разные
-class AutorizationBloc extends Bloc<AutorizationEvent, AuthorizationState> {
+class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   final authorizationRepository = AuthorisationRepository();
-  AutorizationBloc()
+  AuthorizationBloc()
       : super(AuthorizationState(
             isPasswordObscure: true,
-            status: AuthorizationStatus.unauthenticated)) {
-    on<AutorizationEvent>((event, emit) {
-      if (event is AutorizationLogInEvent) {
-        _onLogInRequested(
+            status: AuthorizationStatus.unauthenticated,
+            error: null)) {
+    on<AuthorizationEvent>((event, emit) async {
+      if (event is AuthorizationLogInEvent) {
+        emit(state.copyWith(
+            status: AuthorizationStatus.inprogress, error: null));
+        await _onLogInRequested(
           email: event.email,
           password: event.password,
           emit: emit,
         );
-      } else if (event is AutorizationOnPressEyeEvent) {
-        emit(state.copyWith(isPasswordObscure: !state.isPasswordObscure));
+      } else if (event is AuthorizationOnPressEyeEvent) {
+        emit(state.copyWith(
+            isPasswordObscure: !state.isPasswordObscure, error: null));
       }
     });
   }
@@ -32,10 +36,9 @@ class AutorizationBloc extends Bloc<AutorizationEvent, AuthorizationState> {
     required Emitter<AuthorizationState> emit,
   }) async {
     try {
-      print('$email   $password');
-      emit(state.copyWith(status: AuthorizationStatus.inprogress));
       await authorizationRepository.login(email: email, password: password);
-      emit(state.copyWith(status: AuthorizationStatus.authenticated));
+      emit(state.copyWith(
+          status: AuthorizationStatus.authenticated, error: null));
     } on LogInWithEmailAndPasswordFailure catch (error) {
       emit(state.copyWith(
           status: AuthorizationStatus.unauthenticated, error: error.message));

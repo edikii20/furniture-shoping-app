@@ -1,4 +1,4 @@
-part of 'autorization_bloc.dart';
+part of 'authorization_bloc.dart';
 
 enum AuthorizationStatus { authenticated, unauthenticated, inprogress }
 
@@ -20,7 +20,7 @@ class AuthorizationState {
     return AuthorizationState(
       isPasswordObscure: isPasswordObscure ?? this.isPasswordObscure,
       status: status ?? this.status,
-      error: error ?? this.error,
+      error: error,
     );
   }
 
