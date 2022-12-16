@@ -1,20 +1,39 @@
 part of 'autorization_bloc.dart';
 
-@immutable
-abstract class AutorizationState {}
+enum AuthorizationStatus { authenticated, unauthenticated, inprogress }
 
-class AutorizationEyeVisibilityState extends AutorizationState {
-  final bool isObscure = true;
+class AuthorizationState {
+  final bool isPasswordObscure;
+  final AuthorizationStatus status;
+  final String? error;
+  AuthorizationState({
+    required this.isPasswordObscure,
+    required this.status,
+    this.error,
+  });
+
+  AuthorizationState copyWith({
+    bool? isPasswordObscure,
+    AuthorizationStatus? status,
+    String? error,
+  }) {
+    return AuthorizationState(
+      isPasswordObscure: isPasswordObscure ?? this.isPasswordObscure,
+      status: status ?? this.status,
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  bool operator ==(covariant AuthorizationState other) {
+    if (identical(this, other)) return true;
+
+    return other.isPasswordObscure == isPasswordObscure &&
+        other.status == status &&
+        other.error == error;
+  }
+
+  @override
+  int get hashCode =>
+      isPasswordObscure.hashCode ^ status.hashCode ^ error.hashCode;
 }
-
-class AutorizationUnknownState extends AutorizationState {}
-
-class AutorizationSuccessState extends AutorizationState {}
-
-class AutorizationFailurState extends AutorizationState {
-  final String error;
-
-  AutorizationFailurState({required this.error});
-}
-
-class AutorizationInProgressState extends AutorizationState {}
