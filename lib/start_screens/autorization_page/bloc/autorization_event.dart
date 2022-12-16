@@ -13,10 +13,4 @@ class AutorizationLogInEvent extends AutorizationEvent {
   });
 }
 
-class AutorizationOnPressEyeEvent extends AutorizationEvent {
-  final bool isObscure;
-
-  AutorizationOnPressEyeEvent({
-    required this.isObscure,
-  });
-}
+class AutorizationOnPressEyeEvent extends AutorizationEvent {}

@@ -12,6 +12,7 @@ class User extends HiveObject {
   final String password;
   @HiveField(3)
   final String image;
+  //Добавить id
   //Добавить корзину и список любимых
   //Добавить списки my orders, shipping address, payment method, my rewiews
 
