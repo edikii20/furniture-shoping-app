@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.dart';
+import 'package:furniture_shoping_app/domain/hive_db/entities/session.dart';
 import 'package:hive/hive.dart';
 
 import '../hive_db/entities/user.dart';
@@ -35,7 +38,7 @@ class LogInWithEmailAndPasswordFailure implements Exception {
 
 class AuthorisationRepository {
   late final Box<User> _usersBox;
-  late final Box<User> _sessionBox;
+  late final Box<Session> _sessionBox;
   final RegExp _emailRegExp = RegExp(
       r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$');
 
@@ -53,6 +56,8 @@ class AuthorisationRepository {
     BoxManager.instance.closeBox(_sessionBox);
   }
 
+  //TODO: Для loader screen нужно будет добавить check auth
+
   Future<void> login({required String email, required String password}) async {
     await Future.delayed(const Duration(seconds: 2));
     if (!_emailRegExp.hasMatch(email)) {
@@ -62,14 +67,16 @@ class AuthorisationRepository {
       throw LogInWithEmailAndPasswordFailure.fromCode(
           ExceptionCodes.userNotFound);
     } else {
-      //TODO: Переделать с user id
       final user =
           _usersBox.values.where((element) => element.email == email).first;
+
       if (user.password != password) {
         throw LogInWithEmailAndPasswordFailure.fromCode(
             ExceptionCodes.wrongPassword);
       }
-      await _sessionBox.add(user);
+      //TODO: Hive Не может хранить два одинаковых HiveObject в разных боксах
+      await _sessionBox.add(
+          Session(token: '${Random().nextInt(8999999) + 1000000}', user: user));
       _closeBoxes();
     }
   }

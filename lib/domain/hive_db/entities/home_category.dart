@@ -12,6 +12,9 @@ class HomeCategoryItem extends HiveObject {
   @HiveField(2)
   HiveList<HomeCatalogItem> catalog;
 
-  HomeCategoryItem(
-      {required this.name, required this.iconName, required this.catalog});
+  HomeCategoryItem({
+    required this.name,
+    required this.iconName,
+    required this.catalog,
+  });
 }
