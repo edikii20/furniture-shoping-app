@@ -28,14 +28,15 @@ class HomeCatalogItem extends HiveObject {
   @HiveField(10)
   bool isFavorite = false;
 
-  HomeCatalogItem(
-      {required this.id,
-      required this.name,
-      required this.cost,
-      required this.imageNames,
-      required this.detailsText,
-      required this.rating,
-      required this.countReviews,
-      required this.maxQuantity,
-      required this.selectedColor});
+  HomeCatalogItem({
+    required this.id,
+    required this.name,
+    required this.cost,
+    required this.imageNames,
+    required this.detailsText,
+    required this.rating,
+    required this.countReviews,
+    required this.maxQuantity,
+    required this.selectedColor,
+  });
 }

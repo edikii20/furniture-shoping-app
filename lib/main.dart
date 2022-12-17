@@ -25,6 +25,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 // print(Hive.isAdapterRegistered(2));
 // print(Hive.isAdapterRegistered(3));
 
+// final box = await BoxManager.instance.openUsersBox();
+//   await box.add(User(
+//       id: 0,
+//       name: 'Eduard',
+//       email: 'edikii20@mail.ru',
+//       password: 'jhNF8u47LH',
+//       image: 'image'));
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();

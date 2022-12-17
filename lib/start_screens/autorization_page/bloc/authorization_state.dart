@@ -2,6 +2,7 @@ part of 'authorization_bloc.dart';
 
 enum AuthorizationStatus { authenticated, unauthenticated, inprogress }
 
+//TODO: Подумать над переработкай стейта и разделить его на разные
 class AuthorizationState {
   final bool isPasswordObscure;
   final AuthorizationStatus status;
