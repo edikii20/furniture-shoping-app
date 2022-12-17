@@ -6,7 +6,6 @@ import '../../../domain/repositories/authorization_repository.dart';
 part 'authorization_event.dart';
 part 'authorization_state.dart';
 
-//TODO: Подумать над переработкай стейта и разделить его на разные
 class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   final authorizationRepository = AuthorisationRepository();
   AuthorizationBloc()

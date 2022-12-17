@@ -1,5 +1,6 @@
 import 'package:furniture_shoping_app/domain/hive_db/entities/home_catalog_item.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/home_category.dart';
+import 'package:furniture_shoping_app/domain/hive_db/entities/session.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user_cart.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user_favorites.dart';
@@ -48,12 +49,12 @@ class BoxManager {
     return Hive.openBox<User>('users');
   }
 
-  Future<Box<User>> openSessionBox() async {
-    if (!Hive.isAdapterRegistered(4)) {
-      Hive.registerAdapter(UserAdapter());
+  Future<Box<Session>> openSessionBox() async {
+    if (!Hive.isAdapterRegistered(5)) {
+      Hive.registerAdapter(SessionAdapter());
     }
 
-    return Hive.openBox<User>('session');
+    return Hive.openBox<Session>('session');
   }
 
   Future<void> closeBox(Box box) async {

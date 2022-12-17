@@ -26,7 +26,13 @@ class AutorizationPageWidget extends StatelessWidget {
                 ),
               ),
               backgroundColor: Colors.red,
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              width: 262,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           );
         },
@@ -232,47 +238,50 @@ class _AuthorizationLogInButtonWidget extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.only(left: 9.2),
-        child: ElevatedButton(
-          onPressed: () => context.read<AuthorizationBloc>().add(
-              AuthorizationLogInEvent(
-                  email: emailInputController.text,
-                  password: passwordInputController.text)),
-          style: ButtonStyle(
-            elevation: MaterialStateProperty.all(10),
-            splashFactory: NoSplash.splashFactory,
-            backgroundColor: MaterialStateProperty.all(
-              const Color(0xFF242424),
-            ),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            fixedSize: MaterialStateProperty.all(const Size(285, 50)),
-          ),
-          child: BlocBuilder<AuthorizationBloc, AuthorizationState>(
-            buildWhen: (previous, current) => previous.status != current.status,
-            builder: (context, state) {
-              if (state.status == AuthorizationStatus.inprogress) {
-                return const SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                return const Text(
-                  'Log in',
-                  style: TextStyle(
-                    color: Color(0xFFFFFFFF),
-                    fontSize: 18,
-                    fontFamily: 'NunitoSans',
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.none,
+        child: BlocBuilder<AuthorizationBloc, AuthorizationState>(
+          buildWhen: (previous, current) => previous.status != current.status,
+          builder: (context, state) {
+            return ElevatedButton(
+              onPressed: state.status == AuthorizationStatus.inprogress
+                  ? null
+                  : () => context.read<AuthorizationBloc>().add(
+                      AuthorizationLogInEvent(
+                          email: emailInputController.text,
+                          password: passwordInputController.text)),
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(10),
+                splashFactory: NoSplash.splashFactory,
+                backgroundColor: MaterialStateProperty.all(
+                  const Color(0xFF242424),
+                ),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                );
-              }
-            },
-          ),
+                ),
+                fixedSize: MaterialStateProperty.all(const Size(285, 50)),
+              ),
+              child: state.status == AuthorizationStatus.inprogress
+                  ? const SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      'Log in',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'NunitoSans',
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+            );
+          },
         ),
       ),
     );
