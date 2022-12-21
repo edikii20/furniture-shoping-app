@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:lottie/lottie.dart';
+
+import '../../domain/repositories/authorization_repository.dart';
 
 class LoaderPageWidget extends StatefulWidget {
   const LoaderPageWidget({super.key});
@@ -16,6 +20,7 @@ class _LoaderPageWidgetState extends State<LoaderPageWidget>
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
+    _checkAuth();
   }
 
   @override
@@ -24,19 +29,27 @@ class _LoaderPageWidgetState extends State<LoaderPageWidget>
     super.dispose();
   }
 
+  Future<void> _checkAuth() async {
+    await context.read<AuthorisationRepository>().checkAuth()
+        ? Navigator.of(context).pushReplacementNamed('/page_picker')
+        : Navigator.of(context).pushReplacementNamed('/boarding');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: Lottie.asset(
           'assets/lottie/loader.json',
           controller: _animationController,
           height: 125,
           width: 125,
-          onLoaded: (composition) => _animationController
-            ..duration = composition.duration
-            ..repeat(),
+          onLoaded: (composition) {
+            FlutterNativeSplash.remove();
+            _animationController
+              ..duration = composition.duration
+              ..repeat();
+          },
         ),
       ),
     );

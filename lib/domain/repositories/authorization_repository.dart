@@ -152,9 +152,10 @@ class AuthorisationRepository {
     _closeBoxes();
   }
 
-  bool checkAuth() {
+  Future<bool> checkAuth() async {
     final authenticated = _sessionBox.isNotEmpty;
     _closeBoxes();
+    await Future.delayed(const Duration(seconds: 3));
     return authenticated;
   }
 }

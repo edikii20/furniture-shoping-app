@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 import 'package:furniture_shoping_app/error_screens/navigation_error_page_widget.dart';
@@ -18,6 +19,7 @@ import 'package:furniture_shoping_app/start_screens/registration_page/ui/registr
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'domain/repositories/authorization_repository.dart';
 import 'start_screens/registration_page/bloc/registration_bloc.dart';
 
 // await Hive.deleteBoxFromDisk('home_catalog');
@@ -37,7 +39,8 @@ import 'start_screens/registration_page/bloc/registration_bloc.dart';
 //       image: 'image'));
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   runApp(const MyApp());
 }
@@ -88,7 +91,21 @@ class MyApp extends StatelessWidget {
           return PageRouteBuilder(
             settings: settings,
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoaderPageWidget(),
+                RepositoryProvider(
+              create: (context) => AuthorisationRepository(),
+              lazy: false,
+              child: const LoaderPageWidget(),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+            transitionDuration: const Duration(milliseconds: 100),
+          );
+        } else if (settings.name == "/boarding") {
+          return PageRouteBuilder(
+            settings: settings,
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const BoardingPageWidget(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
