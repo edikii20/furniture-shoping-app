@@ -13,6 +13,7 @@ import 'package:furniture_shoping_app/main_screens/profile_page/profile_page_row
 import 'package:furniture_shoping_app/start_screens/autorization_page/bloc/authorization_bloc.dart';
 import 'package:furniture_shoping_app/start_screens/boarding_page_widget.dart';
 import 'package:furniture_shoping_app/start_screens/autorization_page/ui/autorization_page_widget.dart';
+import 'package:furniture_shoping_app/start_screens/loader_page/loader_page_widget.dart';
 import 'package:furniture_shoping_app/start_screens/registration_page/ui/registration_page_widget.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -87,7 +88,7 @@ class MyApp extends StatelessWidget {
           return PageRouteBuilder(
             settings: settings,
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const BoardingPageWidget(),
+                const LoaderPageWidget(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
