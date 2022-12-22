@@ -16,8 +16,8 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BaseAppBar(
       {super.key,
       required this.title,
-      required this.appBar,
       required this.action,
+      required this.appBar,
       required this.leading,
       required this.tabBar});
 
@@ -115,4 +115,55 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize =>
       Size.fromHeight(appBar.preferredSize.height + (tabBar ? 50 : 0));
+}
+
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const HomeAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      actions: [
+        Container(
+          margin: const EdgeInsets.only(right: 8),
+          child: IconButton(
+            onPressed: () {},
+            splashRadius: 24,
+            icon: const Icon(
+              MyIcons.search,
+              size: 24,
+              color: Color(0xFF242424),
+            ),
+          ),
+        ),
+      ],
+      title: Column(
+        children: const [
+          Text(
+            'Make home',
+            style: TextStyle(
+              color: Color(0xFF909090),
+              fontFamily: 'Gelasio',
+              fontSize: 18,
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            'BEAUTIFUL',
+            style: TextStyle(
+              color: Color(0xFF242424),
+              fontFamily: 'Gelasio',
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
 }

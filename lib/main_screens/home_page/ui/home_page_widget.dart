@@ -6,73 +6,16 @@ import 'package:furniture_shoping_app/utilities/my_icons_widget.dart';
 
 final homePageGlobalKey = GlobalKey<_HomeCatalogWidgetState>();
 
-class HomePageWidget extends StatefulWidget {
+class HomePageWidget extends StatelessWidget {
   const HomePageWidget({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<HomePageWidget> createState() => _HomePageWidgetState();
-}
-
-class _HomePageWidgetState extends State<HomePageWidget> {
-  final _model = HomePageModel();
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await _model.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: HomePageProvider(
-        model: _model,
-        child: Scaffold(
-          appBar: AppBar(
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                child: IconButton(
-                  onPressed: () {},
-                  splashRadius: 24,
-                  icon: const Icon(
-                    MyIcons.search,
-                    size: 24,
-                    color: Color(0xFF242424),
-                  ),
-                ),
-              ),
-            ],
-            title: Column(
-              children: const [
-                Text(
-                  'Make home',
-                  style: TextStyle(
-                    color: Color(0xFF909090),
-                    fontFamily: 'Gelasio',
-                    fontSize: 18,
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  'BEAUTIFUL',
-                  style: TextStyle(
-                    color: Color(0xFF242424),
-                    fontFamily: 'Gelasio',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          body: const _HomePageBodyWidget(),
-        ),
-      ),
+    return HomePageProvider(
+      model: HomePageModel(),
+      child: const _HomePageBodyWidget(),
     );
   }
 }
