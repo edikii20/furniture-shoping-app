@@ -5,6 +5,7 @@ import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.d
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 import 'package:furniture_shoping_app/error_screens/navigation_error_page_widget.dart';
 import 'package:furniture_shoping_app/main_screens/cart_page/ui/congrats_page_widget.dart';
+import 'package:furniture_shoping_app/main_screens/home_page/cubit/home_page_cubit.dart';
 import 'package:furniture_shoping_app/main_screens/page_picker/cubit/page_picker_cubit.dart';
 import 'package:furniture_shoping_app/main_screens/page_picker/ui/page_picker_widget.dart';
 import 'package:furniture_shoping_app/main_screens/product_detail_page/ui/product_detail_page_widget.dart';
@@ -144,9 +145,17 @@ class MyApp extends StatelessWidget {
           return PageRouteBuilder(
             settings: settings,
             pageBuilder: (context, animation, secondaryAnimation) =>
+                MultiBlocProvider(
+              providers: [
                 BlocProvider(
-              create: (_) => PagePickerCubit(),
-              lazy: false,
+                  create: (_) => PagePickerCubit(),
+                  lazy: false,
+                ),
+                BlocProvider(
+                  create: (_) => HomePageCubit(),
+                  lazy: false,
+                ),
+              ],
               child: const PagePickerWidget(),
             ),
             transitionsBuilder:

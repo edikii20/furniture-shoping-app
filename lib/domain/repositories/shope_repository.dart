@@ -1,73 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.dart';
-import 'package:furniture_shoping_app/domain/hive_db/entities/home_catalog_item.dart';
-import 'package:furniture_shoping_app/domain/hive_db/entities/home_category.dart';
-import 'package:furniture_shoping_app/main_screens/home_page/ui/home_page_widget.dart';
 import 'package:hive/hive.dart';
 
-class HomePageModel extends ChangeNotifier {
-  int selectedCategoryIndex = 0;
+import '../hive_db/data_provider/box_manager.dart';
+import '../hive_db/entities/home_catalog_item.dart';
+import '../hive_db/entities/home_category.dart';
+
+class ShopeRepository {
   late final Future<Box<HomeCategoryItem>> _categoriesBox;
   late final Future<Box<HomeCatalogItem>> _catalogBox;
-  late List<HomeCategoryItem> _categories = [];
-  late List<HomeCatalogItem>? _catalogOfSelectedCategory = [];
 
-  List<HomeCategoryItem> get categories => _categories;
-  List<HomeCatalogItem>? get catalog => _catalogOfSelectedCategory;
-  HomePageModel() {
-    _setup();
+  ShopeRepository() {
+    _init();
   }
 
-  @override
-  Future<void> dispose() async {
-    super.dispose();
-    await BoxManager.instance.closeBox(await _categoriesBox);
-  }
-
-  void onTapCatalogItem({required int index, required BuildContext context}) {
-    Navigator.of(context).pushNamed('/product_detail',
-        arguments: _catalogOfSelectedCategory![index]);
-  }
-
-  void onTapCategoryItem(int index) {
-    if (index == selectedCategoryIndex) {
-      return;
-    }
-
-    selectedCategoryIndex = index;
-    final selectedCategoty = _categories.elementAt(selectedCategoryIndex);
-    _loadCatalogOfSelectedCategory(selectedCategoty);
-
-    _jumpCatalogToStart();
-    notifyListeners();
-  }
-
-  void _jumpCatalogToStart() {
-    final scrollOffset =
-        homePageGlobalKey.currentState?.homeItemsGridController.offset;
-    if (scrollOffset != 0) {
-      homePageGlobalKey.currentState?.homeItemsGridController.jumpTo(0);
-    }
-  }
-
-  Future<void> _loadCategoties() async {
-    _categories = (await _categoriesBox).values.toList();
-  }
-
-  Future<void> _loadCatalogOfSelectedCategory(HomeCategoryItem category) async {
-    await _catalogBox;
-    _catalogOfSelectedCategory = category.catalog.toList();
-  }
-
-  Future<void> _setup() async {
+  Future<void> _init() async {
     _categoriesBox = BoxManager.instance.openHomeCategoriesBox();
     _catalogBox = BoxManager.instance.openHomeCatalogBox();
     await _setupDefaultContent();
+  }
 
-    await _loadCategoties();
-    await _loadCatalogOfSelectedCategory(
-        _categories.elementAt(selectedCategoryIndex));
-    notifyListeners();
+  Future<List<HomeCategoryItem>> loadCategoties() async {
+    return (await _categoriesBox).values.toList();
+  }
+
+  Future<List<HomeCatalogItem>> loadCatalogOfCategory(
+      HomeCategoryItem category) async {
+    await _catalogBox;
+    return category.catalog.toList();
+  }
+
+  Future<void> closeBoxes() async {
+    BoxManager.instance.closeBox(await _categoriesBox);
+    BoxManager.instance.closeBox(await _catalogBox);
   }
 
   Future<void> _setupDefaultContent() async {
@@ -383,29 +346,5 @@ class HomePageModel extends ChangeNotifier {
 
       await (await _categoriesBox).addAll(defaultCategoiesList);
     }
-  }
-}
-
-class HomePageProvider extends InheritedNotifier<HomePageModel> {
-  final HomePageModel model;
-  const HomePageProvider({
-    Key? key,
-    required Widget child,
-    required this.model,
-  }) : super(
-          child: child,
-          notifier: model,
-          key: key,
-        );
-
-  static HomePageProvider? watch(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<HomePageProvider>();
-  }
-
-  static HomePageProvider? read(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<HomePageProvider>()
-        ?.widget;
-    return widget is HomePageProvider ? widget : null;
   }
 }
