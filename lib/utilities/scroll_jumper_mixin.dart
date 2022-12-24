@@ -9,7 +9,7 @@ mixin ScrollJumper {
     if (animated) {
       scrollController.animateTo(
         0,
-        duration: const Duration(milliseconds: 1500),
+        duration: const Duration(milliseconds: 500),
         curve: Curves.easeIn,
       );
     } else {

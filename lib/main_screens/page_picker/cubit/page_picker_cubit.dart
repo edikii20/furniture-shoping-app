@@ -15,11 +15,11 @@ class PagePickerCubit extends Cubit<PagePickerState> {
           selectedItemIndex: 0,
           needScrollJump: false,
         ));
-//TODO: Решить проблему при которой, если два раза нажать Double Tap по элементу,
-// то стейт два раза подряд будет true и ничего не поменяется, блок будет думать что стейт не поменялся
+
   void onItemTapped(int index) {
     if (index == state.selectedItemIndex) {
       emit(state.copyWith(needScrollJump: true));
+      emit(state.copyWith(needScrollJump: false));
       return;
     }
 
