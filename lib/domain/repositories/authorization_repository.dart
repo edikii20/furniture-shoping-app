@@ -117,7 +117,11 @@ class AuthorisationRepository {
             ExceptionCodes.wrongPassword);
       }
       await (await _sessionBox).add(
-          Session(token: '${Random().nextInt(8999999) + 1000000}', user: user));
+        Session(
+          token: '${Random().nextInt(8999999) + 1000000}',
+          user: HiveList(await _usersBox, objects: [user]),
+        ),
+      );
       _closeBoxes();
     }
   }
@@ -142,8 +146,16 @@ class AuthorisationRepository {
       throw SignUpWithEmailAndPasswordFailure.fromCode(
           ExceptionCodes.emailAlreadyInUse);
     } else {
-      await (await _usersBox).add(
-          User(name: name, email: email, password: password, image: 'image'));
+      final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+      await (await _usersBox).add(User(
+        name: name,
+        email: email,
+        password: password,
+        image: 'image',
+        cartList: [],
+        favoriteList: HiveList(catalogBox, objects: []),
+      ));
+      BoxManager.instance.closeBox(catalogBox);
       _closeBoxes();
     }
   }

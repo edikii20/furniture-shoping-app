@@ -1,3 +1,4 @@
+import 'package:furniture_shoping_app/domain/hive_db/entities/session.dart';
 import 'package:hive/hive.dart';
 
 import '../hive_db/data_provider/box_manager.dart';
@@ -5,36 +6,103 @@ import '../hive_db/entities/home_catalog_item.dart';
 import '../hive_db/entities/home_category.dart';
 
 class ShopeRepository {
-  late final Future<Box<HomeCategoryItem>> _categoriesBox;
-  late final Future<Box<HomeCatalogItem>> _catalogBox;
-
   ShopeRepository() {
     _init();
   }
 
   Future<void> _init() async {
-    _categoriesBox = BoxManager.instance.openHomeCategoriesBox();
-    _catalogBox = BoxManager.instance.openHomeCatalogBox();
     await _setupDefaultContent();
   }
 
   Future<List<HomeCategoryItem>> loadCategoties() async {
-    return (await _categoriesBox).values.toList();
+    final categoriesBox = await BoxManager.instance.openHomeCategoriesBox();
+    final categories = categoriesBox.values.toList();
+    await BoxManager.instance.closeBox(categoriesBox);
+    return categories;
   }
 
   Future<List<HomeCatalogItem>> loadCatalogOfCategory(
-      HomeCategoryItem category) async {
-    await _catalogBox;
-    return category.catalog.toList();
+      {required HomeCategoryItem category}) async {
+    final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+    final catalog = category.catalog.toList();
+    await BoxManager.instance.closeBox(catalogBox);
+    return catalog;
   }
 
-  Future<void> closeBoxes() async {
-    BoxManager.instance.closeBox(await _categoriesBox);
-    BoxManager.instance.closeBox(await _catalogBox);
+//TODO: Проверить что нужно именно сохранять user или session или user и session
+  Future<void> addToFavorite({required int catalogItemID}) async {
+    final sessionBox = await BoxManager.instance.openSessionBox();
+    final usersBox = await BoxManager.instance.openUsersBox();
+    final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+    final session = sessionBox.getAt(0);
+    final catalogItem = catalogBox.get(catalogItemID)!;
+    catalogItem.isFavorite = true;
+    session?.user.first.favoriteList.add(catalogItem);
+
+    await catalogItem.save();
+
+    await session?.user.first.save();
+    await BoxManager.instance.closeBox(catalogBox);
+    await BoxManager.instance.closeBox(usersBox);
+    await BoxManager.instance.closeBox(sessionBox);
   }
+
+  Future<void> removeFromFavorite({required int catalogItemID}) async {
+    final sessionBox = await BoxManager.instance.openSessionBox();
+    final usersBox = await BoxManager.instance.openUsersBox();
+    final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+    final session = sessionBox.getAt(0);
+    final catalogItem = catalogBox.get(catalogItemID)!;
+    catalogItem.isFavorite = false;
+    session?.user.first.favoriteList.remove(catalogItem);
+    await catalogItem.save();
+
+    await session?.user.first.save();
+    await BoxManager.instance.closeBox(catalogBox);
+    await BoxManager.instance.closeBox(usersBox);
+    await BoxManager.instance.closeBox(sessionBox);
+  }
+
+  Future<void> addToCart({
+    required int catalogItemID,
+    required int selectedQuantity,
+    required String selectedColor,
+  }) async {
+    final sessionBox = await BoxManager.instance.openSessionBox();
+    final usersBox = await BoxManager.instance.openUsersBox();
+    final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+    final session = sessionBox.getAt(0);
+    final catalogItem = catalogBox.get(catalogItemID)!
+      ..selectedColor = selectedColor
+      ..selectedQuantity = selectedQuantity
+      ..maxQuantity -= selectedQuantity;
+    final isItemInCart = session!.user.first.cartList.any((element) =>
+        element.id == catalogItem.id &&
+        element.selectedColor == catalogItem.selectedColor);
+
+    if (isItemInCart) {
+      session.user.first.cartList
+          .firstWhere((element) =>
+              element.id == catalogItem.id &&
+              element.selectedColor == catalogItem.selectedColor)
+          .selectedQuantity += catalogItem.selectedQuantity;
+    } else {
+      session.user.first.cartList.add(catalogItem);
+    }
+
+    await catalogItem.save();
+    await session.user.first.save();
+    await BoxManager.instance.closeBox(catalogBox);
+    await BoxManager.instance.closeBox(usersBox);
+    await BoxManager.instance.closeBox(sessionBox);
+  }
+
+  Future<void> removeFromCart({required HomeCatalogItem catalogItem}) async {}
 
   Future<void> _setupDefaultContent() async {
-    if ((await _categoriesBox).values.isEmpty) {
+    final categoriesBox = await BoxManager.instance.openHomeCategoriesBox();
+    final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+    if (categoriesBox.values.isEmpty) {
       List<HomeCatalogItem> defaultCatalog = [
         HomeCatalogItem(
           id: 0,
@@ -294,28 +362,25 @@ class ShopeRepository {
         ),
       ];
 
-      await (await _catalogBox).addAll(defaultCatalog);
-      var popularCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox).values.toList());
-      var chairCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox)
-              .values
+      await catalogBox.addAll(defaultCatalog);
+      var popularCatalog =
+          HiveList(catalogBox, objects: catalogBox.values.toList());
+      var chairCatalog = HiveList(catalogBox,
+          objects: catalogBox.values
               .where((element) => element.name == 'Coffee Chair')
               .toList());
-      var tableCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox)
-              .values
+      var tableCatalog = HiveList(catalogBox,
+          objects: catalogBox.values
               .where((element) =>
                   element.name == 'Simple Desk' ||
                   element.name == 'Minimal Stand')
               .toList());
-      var armchairCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox).values.toList().sublist(0, 5));
-      var bedCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox).values.toList().sublist(3, 7));
-      var lampCatalog = HiveList((await _catalogBox),
-          objects: (await _catalogBox)
-              .values
+      var armchairCatalog = HiveList(catalogBox,
+          objects: catalogBox.values.toList().sublist(0, 5));
+      var bedCatalog = HiveList(catalogBox,
+          objects: catalogBox.values.toList().sublist(3, 7));
+      var lampCatalog = HiveList(catalogBox,
+          objects: catalogBox.values
               .where((element) => element.name == 'Black Simple Lamp')
               .toList());
 
@@ -344,7 +409,9 @@ class ShopeRepository {
             catalog: lampCatalog),
       ];
 
-      await (await _categoriesBox).addAll(defaultCategoiesList);
+      await categoriesBox.addAll(defaultCategoiesList);
     }
+    await BoxManager.instance.closeBox(catalogBox);
+    await BoxManager.instance.closeBox(categoriesBox);
   }
 }

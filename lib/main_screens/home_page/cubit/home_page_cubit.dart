@@ -9,11 +9,12 @@ import '../../../domain/hive_db/entities/home_category.dart';
 
 part 'home_page_state.dart';
 
-//TODO: Нужно подумать когда закрывать Shope Repository боксы
+//TODO: Проверить закрывется ли cubit когда меняется страница
 class HomePageCubit extends Cubit<HomePageState> with ScrollJumper {
-  final shopeRepository = ShopeRepository();
-  HomePageCubit()
-      : super(HomePageState(
+  final ShopeRepository _shopeRepository;
+  HomePageCubit({required ShopeRepository shopeRepository})
+      : _shopeRepository = shopeRepository,
+        super(HomePageState(
           selectedCategoryIndex: 0,
           categories: [],
           catalogOfCategory: [],
@@ -22,9 +23,10 @@ class HomePageCubit extends Cubit<HomePageState> with ScrollJumper {
   }
 
   Future<void> _init() async {
-    final categories = await shopeRepository.loadCategoties();
-    final catalogOfCategory = await shopeRepository
-        .loadCatalogOfCategory(categories[state.selectedCategoryIndex]);
+    final categories = await _shopeRepository.loadCategoties();
+    final catalogOfCategory = await _shopeRepository.loadCatalogOfCategory(
+      category: categories[state.selectedCategoryIndex],
+    );
     emit(state.copyWith(
       categories: categories,
       catalogOfCategory: catalogOfCategory,
@@ -37,8 +39,9 @@ class HomePageCubit extends Cubit<HomePageState> with ScrollJumper {
   }) async {
     if (index == state.selectedCategoryIndex) return;
 
-    final catalogOfCategory =
-        await shopeRepository.loadCatalogOfCategory(state.categories[index]);
+    final catalogOfCategory = await _shopeRepository.loadCatalogOfCategory(
+      category: state.categories[index],
+    );
     emit(state.copyWith(
       selectedCategoryIndex: index,
       catalogOfCategory: catalogOfCategory,

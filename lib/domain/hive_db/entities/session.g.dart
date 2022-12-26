@@ -8,7 +8,7 @@ part of 'session.dart';
 
 class SessionAdapter extends TypeAdapter<Session> {
   @override
-  final int typeId = 5;
+  final int typeId = 3;
 
   @override
   Session read(BinaryReader reader) {
@@ -18,7 +18,7 @@ class SessionAdapter extends TypeAdapter<Session> {
     };
     return Session(
       token: fields[0] as String,
-      user: fields[1] as User,
+      user: (fields[1] as HiveList).castHiveList(),
     );
   }
 

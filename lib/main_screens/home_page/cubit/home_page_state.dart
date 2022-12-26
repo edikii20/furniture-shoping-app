@@ -1,5 +1,7 @@
 part of 'home_page_cubit.dart';
 
+//TODO: Добавить статус HomePageState чтобы отслеживать начальную инициализацию
+// типа {initialization , complete, failure} и исправить билдер HomePageWidget
 class HomePageState {
   final int selectedCategoryIndex;
   final List<HomeCategoryItem> categories;
