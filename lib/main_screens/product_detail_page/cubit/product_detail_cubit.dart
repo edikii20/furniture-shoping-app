@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/home_catalog_item.dart';
 import 'package:furniture_shoping_app/domain/repositories/shope_repository.dart';
-import 'dart:convert';
 
 part 'product_detail_state.dart';
 
