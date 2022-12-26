@@ -37,13 +37,16 @@ import 'start_screens/registration_page/bloc/registration_bloc.dart';
 // print(Hive.isAdapterRegistered(2));
 // print(Hive.isAdapterRegistered(3));
 
-// final box = await BoxManager.instance.openUsersBox();
-//   await box.add(User(
-//       id: 0,
-//       name: 'Eduard',
-//       email: 'edikii20@mail.ru',
-//       password: 'jhNF8u47LH',
-//       image: 'image'));
+// final usersBox = await BoxManager.instance.openUsersBox();
+//   final sessionBox = await BoxManager.instance.openSessionBox();
+//   final cataloBox = await BoxManager.instance.openHomeCatalogBox();
+//   print(
+//       'UsersBox cart = ${usersBox.get(0)?.cartList.length}  favorites = ${usersBox.get(0)?.favoriteList.length}');
+//   print(
+//       'SessionBox cart = ${sessionBox.get(0)?.user.first.cartList.length}  favorites = ${sessionBox.get(0)?.user.first.favoriteList.length}');
+//   await BoxManager.instance.closeBox(usersBox);
+//   await BoxManager.instance.closeBox(sessionBox);
+//   await BoxManager.instance.closeBox(cataloBox);
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -54,17 +57,6 @@ void main() async {
   Hive.registerAdapter<HomeCategoryItem>(HomeCategoryItemAdapter());
   Hive.registerAdapter<User>(UserAdapter());
   Hive.registerAdapter<Session>(SessionAdapter());
-
-  final usersBox = await BoxManager.instance.openUsersBox();
-  final sessionBox = await BoxManager.instance.openSessionBox();
-  final cataloBox = await BoxManager.instance.openHomeCatalogBox();
-  print(
-      'UsersBox cart = ${usersBox.get(0)?.cartList.length}  favorites = ${usersBox.get(0)?.favoriteList.length}');
-  print(
-      'SessionBox cart = ${sessionBox.get(0)?.user.first.cartList.length}  favorites = ${sessionBox.get(0)?.user.first.favoriteList.length}');
-  await BoxManager.instance.closeBox(usersBox);
-  await BoxManager.instance.closeBox(sessionBox);
-  await BoxManager.instance.closeBox(cataloBox);
 
   final shopeRepository = ShopeRepository();
   runApp(MyApp(shopeRepository: shopeRepository));
