@@ -2,8 +2,6 @@ import 'package:furniture_shoping_app/domain/hive_db/entities/home_catalog_item.
 import 'package:furniture_shoping_app/domain/hive_db/entities/home_category.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/session.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
-import 'package:furniture_shoping_app/domain/hive_db/entities/user_cart.dart';
-import 'package:furniture_shoping_app/domain/hive_db/entities/user_favorites.dart';
 import 'package:hive/hive.dart';
 
 class BoxManager {
@@ -12,47 +10,31 @@ class BoxManager {
   BoxManager._();
 
   Future<Box<HomeCatalogItem>> openHomeCatalogBox() async {
-    if (!Hive.isAdapterRegistered(0)) {
-      Hive.registerAdapter(HomeCatalogItemAdapter());
-    }
+    // if (!Hive.isAdapterRegistered(0)) {
+    //   Hive.registerAdapter<HomeCatalogItem>(HomeCatalogItemAdapter());
+    // }
     return Hive.openBox<HomeCatalogItem>('home_catalog');
   }
 
   Future<Box<HomeCategoryItem>> openHomeCategoriesBox() async {
-    if (!Hive.isAdapterRegistered(1)) {
-      Hive.registerAdapter(HomeCategoryItemAdapter());
-    }
+    // if (!Hive.isAdapterRegistered(1)) {
+    //   Hive.registerAdapter<HomeCategoryItem>(HomeCategoryItemAdapter());
+    // }
     return Hive.openBox<HomeCategoryItem>('home_categories');
   }
 
-  Future<Box<UserFavorites>> openFavoritesBox() async {
-    if (!Hive.isAdapterRegistered(2)) {
-      Hive.registerAdapter(UserFavoritesAdapter());
-    }
-
-    return Hive.openBox<UserFavorites>('favorites');
-  }
-
-  Future<Box<UserCart>> openCartBox() async {
-    if (!Hive.isAdapterRegistered(3)) {
-      Hive.registerAdapter(UserCartAdapter());
-    }
-
-    return Hive.openBox<UserCart>('cart');
-  }
-
   Future<Box<User>> openUsersBox() async {
-    if (!Hive.isAdapterRegistered(4)) {
-      Hive.registerAdapter(UserAdapter());
-    }
+    // if (!Hive.isAdapterRegistered(2)) {
+    //   Hive.registerAdapter<User>(UserAdapter());
+    // }
 
     return Hive.openBox<User>('users');
   }
 
   Future<Box<Session>> openSessionBox() async {
-    if (!Hive.isAdapterRegistered(5)) {
-      Hive.registerAdapter(SessionAdapter());
-    }
+    // if (!Hive.isAdapterRegistered(3)) {
+    //   Hive.registerAdapter<Session>(SessionAdapter());
+    // }
 
     return Hive.openBox<Session>('session');
   }

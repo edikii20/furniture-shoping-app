@@ -5,7 +5,10 @@ import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.d
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 import 'package:furniture_shoping_app/error_screens/navigation_error_page_widget.dart';
 import 'package:furniture_shoping_app/main_screens/cart_page/ui/congrats_page_widget.dart';
+import 'package:furniture_shoping_app/main_screens/home_page/cubit/home_page_cubit.dart';
+import 'package:furniture_shoping_app/main_screens/page_picker/cubit/page_picker_cubit.dart';
 import 'package:furniture_shoping_app/main_screens/page_picker/ui/page_picker_widget.dart';
+import 'package:furniture_shoping_app/main_screens/product_detail_page/cubit/product_detail_cubit.dart';
 import 'package:furniture_shoping_app/main_screens/product_detail_page/ui/product_detail_page_widget.dart';
 import 'package:furniture_shoping_app/main_screens/profile_page/profile_page_rows/orders_page/orders_page_widget.dart';
 import 'package:furniture_shoping_app/main_screens/profile_page/profile_page_rows/payment_method_page/payment_method_page_widget.dart';
@@ -20,7 +23,10 @@ import 'package:furniture_shoping_app/start_screens/registration_page/ui/registr
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'domain/repositories/authorization_repository.dart';
+import 'domain/hive_db/entities/home_catalog_item.dart';
+import 'domain/hive_db/entities/home_category.dart';
+import 'domain/hive_db/entities/session.dart';
+import 'domain/repositories/shope_repository.dart';
 import 'start_screens/registration_page/bloc/registration_bloc.dart';
 
 // await Hive.deleteBoxFromDisk('home_catalog');
@@ -31,23 +37,36 @@ import 'start_screens/registration_page/bloc/registration_bloc.dart';
 // print(Hive.isAdapterRegistered(2));
 // print(Hive.isAdapterRegistered(3));
 
-// final box = await BoxManager.instance.openUsersBox();
-//   await box.add(User(
-//       id: 0,
-//       name: 'Eduard',
-//       email: 'edikii20@mail.ru',
-//       password: 'jhNF8u47LH',
-//       image: 'image'));
+// final usersBox = await BoxManager.instance.openUsersBox();
+//   final sessionBox = await BoxManager.instance.openSessionBox();
+//   final cataloBox = await BoxManager.instance.openHomeCatalogBox();
+//   print(
+//       'UsersBox cart = ${usersBox.get(0)?.cartList.length}  favorites = ${usersBox.get(0)?.favoriteList.length}');
+//   print(
+//       'SessionBox cart = ${sessionBox.get(0)?.user.first.cartList.length}  favorites = ${sessionBox.get(0)?.user.first.favoriteList.length}');
+//   await BoxManager.instance.closeBox(usersBox);
+//   await BoxManager.instance.closeBox(sessionBox);
+//   await BoxManager.instance.closeBox(cataloBox);
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await Hive.initFlutter();
-  runApp(const MyApp());
+  Hive.registerAdapter<HomeCatalogItem>(HomeCatalogItemAdapter());
+  Hive.registerAdapter<HomeCategoryItem>(HomeCategoryItemAdapter());
+  Hive.registerAdapter<User>(UserAdapter());
+  Hive.registerAdapter<Session>(SessionAdapter());
+
+  final shopeRepository = ShopeRepository();
+  runApp(MyApp(shopeRepository: shopeRepository));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required ShopeRepository shopeRepository})
+      : _shopeRepository = shopeRepository;
+
+  final ShopeRepository _shopeRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +163,20 @@ class MyApp extends StatelessWidget {
           return PageRouteBuilder(
             settings: settings,
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const PagePickerWidget(),
+                MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => PagePickerCubit(),
+                  lazy: false,
+                ),
+                BlocProvider(
+                  create: (_) =>
+                      HomePageCubit(shopeRepository: _shopeRepository),
+                  lazy: false,
+                ),
+              ],
+              child: const PagePickerWidget(),
+            ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               final tween =
@@ -164,8 +196,17 @@ class MyApp extends StatelessWidget {
         } else if (settings.name == "/product_detail") {
           return PageRouteBuilder(
             settings: settings,
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const ProductDetailPageWidget(),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              final cataloItem =
+                  ModalRoute.of(context)!.settings.arguments as HomeCatalogItem;
+              return BlocProvider(
+                create: (context) => ProductDetailCubit(
+                  shopeRepository: _shopeRepository,
+                  catalogItem: cataloItem,
+                ),
+                child: const ProductDetailPageWidget(),
+              );
+            },
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),

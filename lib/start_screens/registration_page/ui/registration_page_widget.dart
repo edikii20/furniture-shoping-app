@@ -255,8 +255,10 @@ class _RegistrationSignUpButtonWidget extends StatelessWidget {
       listenWhen: (previous, current) =>
           current.status == RegistrationStatus.complete,
       listener: (context, state) {
-        Future.delayed(const Duration(seconds: 1),
-            () => Navigator.of(context).pushReplacementNamed('/login'));
+        Future.delayed(
+          const Duration(seconds: 1),
+          () => Navigator.of(context).pushReplacementNamed('/login'),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(left: 9.2),

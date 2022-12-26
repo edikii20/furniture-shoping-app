@@ -74,12 +74,11 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
   }
 }
 
-//TODO: Найти нормальные регулярки
 class AuthorisationRepository {
   late final Future<Box<User>> _usersBox;
   late final Future<Box<Session>> _sessionBox;
-  final RegExp _emailRegExp = RegExp(
-      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.+.[a-zA-Z0-9-]{2,4}$');
+  final RegExp _emailRegExp =
+      RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
 
   final _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
 
@@ -96,8 +95,6 @@ class AuthorisationRepository {
     BoxManager.instance.closeBox(await _usersBox);
     BoxManager.instance.closeBox(await _sessionBox);
   }
-
-  //TODO: Для loader screen нужно будет добавить check auth
 
   Future<void> login({required String email, required String password}) async {
     await Future.delayed(const Duration(seconds: 2));
@@ -120,7 +117,11 @@ class AuthorisationRepository {
             ExceptionCodes.wrongPassword);
       }
       await (await _sessionBox).add(
-          Session(token: '${Random().nextInt(8999999) + 1000000}', user: user));
+        Session(
+          token: '${Random().nextInt(8999999) + 1000000}',
+          user: HiveList(await _usersBox, objects: [user]),
+        ),
+      );
       _closeBoxes();
     }
   }
@@ -145,8 +146,16 @@ class AuthorisationRepository {
       throw SignUpWithEmailAndPasswordFailure.fromCode(
           ExceptionCodes.emailAlreadyInUse);
     } else {
-      await (await _usersBox).add(
-          User(name: name, email: email, password: password, image: 'image'));
+      final catalogBox = await BoxManager.instance.openHomeCatalogBox();
+      await (await _usersBox).add(User(
+        name: name,
+        email: email,
+        password: password,
+        image: 'image',
+        cartList: [],
+        favoriteList: HiveList(catalogBox, objects: []),
+      ));
+      BoxManager.instance.closeBox(catalogBox);
       _closeBoxes();
     }
   }

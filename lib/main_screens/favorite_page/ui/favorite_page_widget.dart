@@ -33,59 +33,12 @@ class _FavoritePageWidgetState extends State<FavoritePageWidget> {
               leading: null,
               appBar: AppBar(),
               tabBar: false),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerFloat,
-          // floatingActionButton: const Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 16),
-          //   child: _AddAllToCartButtonWidget(),
-          // ),
           body: _FavoriteListViewWidget(key: favoritePageGlobalKey),
         ),
       ),
     );
   }
 }
-
-// class _AddAllToCartButtonWidget extends StatelessWidget {
-//   const _AddAllToCartButtonWidget({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     bool isEmptyFavoriteList =
-//         FavoritePageProvider.watch(context)?.model.favoriteList.isEmpty ?? true;
-//     return ElevatedButton(
-//       onPressed: isEmptyFavoriteList
-//           ? null
-//           : FavoritePageProvider.read(context)?.model.onPressedAddAllToCart,
-//       style: ButtonStyle(
-//         elevation: MaterialStateProperty.all(10),
-//         splashFactory: NoSplash.splashFactory,
-//         backgroundColor: !isEmptyFavoriteList
-//             ? MaterialStateProperty.all(
-//                 const Color(0xFF242424),
-//               )
-//             : MaterialStateProperty.all(
-//                 const Color(0xFF999999),
-//               ),
-//         shape: MaterialStateProperty.all(
-//           RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(8),
-//           ),
-//         ),
-//         fixedSize: MaterialStateProperty.all(const Size(double.maxFinite, 50)),
-//       ),
-//       child: const Text(
-//         'Add all to my cart',
-//         style: TextStyle(
-//           color: Color(0xFFFFFFFF),
-//           fontSize: 18,
-//           fontFamily: 'NunitoSans',
-//           fontWeight: FontWeight.w600,
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class _FavoriteListViewWidget extends StatefulWidget {
   const _FavoriteListViewWidget({Key? key}) : super(key: key);

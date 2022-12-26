@@ -5,12 +5,12 @@ import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 
 part 'session.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: 3)
 class Session extends HiveObject {
   @HiveField(0)
-  final String token;
+  String token;
   @HiveField(1)
-  final User user;
+  HiveList<User> user;
 
   Session({
     required this.token,
