@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:furniture_shoping_app/utilities/my_icons_widget.dart';
 

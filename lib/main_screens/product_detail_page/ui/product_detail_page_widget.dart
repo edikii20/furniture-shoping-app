@@ -111,6 +111,9 @@ class _ProductAddToCartButtonWidget extends StatelessWidget {
   }
 }
 
+//TODO: Билдется всегда, нужно сделать чтобы билделся если favorite другой
+// Проблема в том что prev и cur стейт почему-то приходят одинаковыми хотя не должны
+// Есть мысль что это из-за того что home_catalog_item entity не иммутабельная
 class _ProductBookmarkButtonWidget extends StatelessWidget {
   const _ProductBookmarkButtonWidget({
     Key? key,
@@ -129,8 +132,6 @@ class _ProductBookmarkButtonWidget extends StatelessWidget {
           color: const Color(0xFFF0F0F0),
         ),
         child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
-          buildWhen: (previous, current) =>
-              previous.catalogItem.isFavorite != current.catalogItem.isFavorite,
           builder: (context, state) {
             return Icon(
               state.catalogItem.isFavorite
@@ -281,7 +282,7 @@ class _ProductQuantitySelectionWidget extends StatelessWidget {
               previous.quantity != current.quantity,
           builder: (context, state) {
             return Text(
-              '${state.quantity < 10 ? 0 : ''}',
+              '${state.quantity < 10 ? 0 : ''}${state.quantity}',
               style: const TextStyle(
                 color: Color(0xFF242424),
                 fontSize: 18,

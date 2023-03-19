@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:furniture_shoping_app/domain/hive_db/data_provider/box_manager.dart';
 import 'package:furniture_shoping_app/domain/hive_db/entities/user.dart';
 import 'package:furniture_shoping_app/error_screens/navigation_error_page_widget.dart';
 import 'package:furniture_shoping_app/main_screens/cart_page/ui/congrats_page_widget.dart';
@@ -20,7 +19,6 @@ import 'package:furniture_shoping_app/start_screens/autorization_page/ui/autoriz
 import 'package:furniture_shoping_app/start_screens/loader_page/cubit/loader_cubit.dart';
 import 'package:furniture_shoping_app/start_screens/loader_page/ui/loader_page_widget.dart';
 import 'package:furniture_shoping_app/start_screens/registration_page/ui/registration_page_widget.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'domain/hive_db/entities/home_catalog_item.dart';

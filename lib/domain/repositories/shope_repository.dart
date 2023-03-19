@@ -1,4 +1,3 @@
-import 'package:furniture_shoping_app/domain/hive_db/entities/session.dart';
 import 'package:hive/hive.dart';
 
 import '../hive_db/data_provider/box_manager.dart';
@@ -29,7 +28,6 @@ class ShopeRepository {
     return catalog;
   }
 
-//TODO: Проверить что нужно именно сохранять user или session или user и session
   Future<void> addToFavorite({required int catalogItemID}) async {
     final sessionBox = await BoxManager.instance.openSessionBox();
     final usersBox = await BoxManager.instance.openUsersBox();
